@@ -11,14 +11,22 @@ const app = express();
 // Middlewares
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Rutas
+// Servir archivos estáticos
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(express.static(path.join(__dirname, "public"))); // Frontend
+
+// Rutas de la API
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/books", require("./routes/bookRoutes"));
 app.use("/api/users", require("./routes/userRoutes"));
 
-// Conexión a MongoDB
+// Catch-all: redirige cualquier otra ruta al frontend (404.html)
+app.get("*", (req, res) => {
+  res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+});
+
+// Conexión a MongoDB y arranque del servidor
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
     console.log("✅ Conectado a MongoDB");
