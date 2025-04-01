@@ -12,18 +12,22 @@
     <nav>
       <button id="logoutBtn">Cerrar sesión</button>
       <a href="favorites.html">⭐ Ver Favoritos</a>
-      <a href="admin-panel.html" id="adminPanelBtn" style="display: none;">⚙️ Gestionar Libros</a>
     </nav>
   </header>
 
   <main>
     <a href="add-book.html" id="adminBtn" style="display: none;">➕ Agregar Libro</a>
-    <input type="text" id="searchInput" placeholder="Buscar por título..." />
-    <select id="genreFilter">
-      <option value="">Todos los géneros</option>
-    </select>
-    <div class="book-grid" id="bookList">
-      <!-- Los libros se cargarán aquí -->
+    <div class="book-controls">
+      <input type="text" id="searchInput" placeholder="Buscar por título..." />
+      <select id="genreFilter">
+        <option value="">Todos los géneros</option>
+      </select>
+    </div>
+
+    <div class="book-grid-container">
+      <div class="book-grid" id="bookList">
+        <!-- Los libros se cargarán aquí -->
+      </div>
     </div>
   </main>
 

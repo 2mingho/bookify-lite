@@ -42,8 +42,9 @@
         <input type="text" name="genero" placeholder="Género" />
         <textarea name="descripcion" placeholder="Descripción"></textarea>
 
-        <label>Portada (opcional)</label>
-        <input type="file" name="portada" accept="image/*" />
+        <label>URL de la portada</label>
+        <input type="url" name="portada" placeholder="https://..." />
+
         <label>Archivo PDF (opcional)</label>
         <input type="file" name="pdf" accept="application/pdf" />
 
@@ -64,13 +65,14 @@
     }
 
     async function cargarLibro() {
-      const res = await fetch(`http://localhost:5000/api/books/${bookId}`);
+      const res = await fetch(`${window.location.origin}/api/books/${bookId}`);
       const libro = await res.json();
       document.querySelector("input[name='titulo']").value = libro.titulo;
       document.querySelector("input[name='autor']").value = libro.autor;
       document.querySelector("input[name='anio']").value = libro.anio || "";
       document.querySelector("input[name='genero']").value = libro.genero || "";
       document.querySelector("textarea[name='descripcion']").value = libro.descripcion || "";
+      document.querySelector("input[name='portada']").value = libro.portada || "";
     }
 
     document.getElementById("editForm").addEventListener("submit", async (e) => {
@@ -78,12 +80,31 @@
       const form = e.target;
       const formData = new FormData(form);
 
-      const res = await fetch(`http://localhost:5000/api/books/${bookId}`, {
+      const data = {
+        titulo: formData.get("titulo"),
+        autor: formData.get("autor"),
+        anio: formData.get("anio"),
+        genero: formData.get("genero"),
+        descripcion: formData.get("descripcion"),
+        portada: formData.get("portada")
+      };
+
+      const fullForm = new FormData();
+      for (const key in data) {
+        fullForm.append(key, data[key]);
+      }
+
+      const pdfFile = formData.get("pdf");
+      if (pdfFile && pdfFile.size > 0) {
+        fullForm.append("pdf", pdfFile);
+      }
+
+      const res = await fetch(`${window.location.origin}/api/books/${bookId}`, {
         method: "PUT",
         headers: {
           Authorization: token
         },
-        body: formData
+        body: fullForm
       });
 
       const result = await res.json();

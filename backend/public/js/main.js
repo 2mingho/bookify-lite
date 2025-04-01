@@ -90,10 +90,10 @@ async function loadBooks() {
     const isFav = favoriteIds.includes(book._id);
     return `
       <div class="book-card">
-        <img src="http://localhost:5000/${book.portada}" alt="${book.titulo}" />
+        <img src="${book.portada}" alt="${book.titulo}" />
         <h3>${book.titulo}</h3>
         <p>${book.autor}</p>
-        <a href="reader.html?pdf=http://localhost:5000/${book.pdf}" target="_blank">📖 Leer</a>
+        <a href="reader.html?pdf=${book.pdf}" target="_blank">📖 Leer</a>
         <button class="fav-btn ${isFav ? 'filled' : 'empty'}" onclick="toggleFavorite('${book._id}', this)"></button>
       </div>
     `;

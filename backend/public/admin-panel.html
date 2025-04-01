@@ -52,20 +52,24 @@
   </header>
 
   <main>
-    <table class="admin-table" id="adminTable">
-      <thead>
-        <tr>
-          <th>Portada</th>
-          <th>Título</th>
-          <th>Autor</th>
-          <th>Género</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- Libros se cargarán aquí -->
-      </tbody>
-    </table>
+    <div class="book-grid-container">
+      <div style="width: 100%; max-width: 1000px;">
+        <table class="admin-table" id="adminTable">
+          <thead>
+            <tr>
+              <th>Portada</th>
+              <th>Título</th>
+              <th>Autor</th>
+              <th>Género</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Libros se cargarán aquí -->
+          </tbody>
+        </table>
+      </div>
+    </div>
   </main>
 
   <script>
@@ -82,13 +86,13 @@
     }
 
     async function cargarLibrosAdmin() {
-      const res = await fetch("http://localhost:5000/api/books");
+      const res = await fetch(`${window.location.origin}/api/books`);
       const libros = await res.json();
 
       const tabla = document.querySelector("#adminTable tbody");
       tabla.innerHTML = libros.map(libro => `
         <tr>
-          <td><img src="http://localhost:5000/${libro.portada}" alt="${libro.titulo}" width="60"></td>
+          <td><img src="${libro.portada}" alt="${libro.titulo}" width="60"></td>
           <td>${libro.titulo}</td>
           <td>${libro.autor}</td>
           <td>${libro.genero || '-'}</td>
@@ -106,7 +110,7 @@
 
     async function eliminarLibro(id) {
       if (!confirm("¿Estás seguro de que deseas eliminar este libro?")) return;
-      const res = await fetch(`http://localhost:5000/api/books/${id}`, {
+      const res = await fetch(`${window.location.origin}/api/books/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: token
