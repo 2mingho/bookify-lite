@@ -31,7 +31,7 @@ exports.createBook = async (req, res) => {
     const { titulo, autor, anio, genero, descripcion, portada, pdf } = req.body;
 
     if (!titulo || !autor || !portada || !pdf) {
-      return res.status(400).json({ error: "Título, autor, portada y PDF son obligatorios" });
+      return res.status(400).json({ error: "Faltan campos obligatorios." });
     }
 
     const newBook = new Book({ titulo, autor, anio, genero, descripcion, portada, pdf });
@@ -46,7 +46,6 @@ exports.createBook = async (req, res) => {
 exports.updateBook = async (req, res) => {
   try {
     const { titulo, autor, anio, genero, descripcion, portada, pdf } = req.body;
-
     const updatedFields = { titulo, autor, anio, genero, descripcion, portada, pdf };
 
     const updated = await Book.findByIdAndUpdate(req.params.id, updatedFields, { new: true });

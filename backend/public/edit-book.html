@@ -35,18 +35,15 @@
 
   <main>
     <div class="edit-container">
-      <form id="editForm" enctype="multipart/form-data">
+      <form id="editForm">
         <input type="text" name="titulo" placeholder="Título" required />
         <input type="text" name="autor" placeholder="Autor" required />
         <input type="number" name="anio" placeholder="Año de publicación" />
         <input type="text" name="genero" placeholder="Género" />
         <textarea name="descripcion" placeholder="Descripción"></textarea>
 
-        <label>URL de la portada</label>
-        <input type="url" name="portada" placeholder="https://..." />
-
-        <label>Archivo PDF (opcional)</label>
-        <input type="file" name="pdf" accept="application/pdf" />
+        <input type="url" name="portada" placeholder="Enlace de portada (URL)" />
+        <input type="url" name="pdf" placeholder="Enlace del archivo PDF (URL)" />
 
         <button type="submit">Guardar Cambios</button>
         <p id="editError" class="error-msg"></p>
@@ -65,7 +62,7 @@
     }
 
     async function cargarLibro() {
-      const res = await fetch(`${window.location.origin}/api/books/${bookId}`);
+      const res = await fetch(`/api/books/${bookId}`);
       const libro = await res.json();
       document.querySelector("input[name='titulo']").value = libro.titulo;
       document.querySelector("input[name='autor']").value = libro.autor;
@@ -73,38 +70,20 @@
       document.querySelector("input[name='genero']").value = libro.genero || "";
       document.querySelector("textarea[name='descripcion']").value = libro.descripcion || "";
       document.querySelector("input[name='portada']").value = libro.portada || "";
+      document.querySelector("input[name='pdf']").value = libro.pdf || "";
     }
 
     document.getElementById("editForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const form = e.target;
-      const formData = new FormData(form);
+      const formData = Object.fromEntries(new FormData(e.target));
 
-      const data = {
-        titulo: formData.get("titulo"),
-        autor: formData.get("autor"),
-        anio: formData.get("anio"),
-        genero: formData.get("genero"),
-        descripcion: formData.get("descripcion"),
-        portada: formData.get("portada")
-      };
-
-      const fullForm = new FormData();
-      for (const key in data) {
-        fullForm.append(key, data[key]);
-      }
-
-      const pdfFile = formData.get("pdf");
-      if (pdfFile && pdfFile.size > 0) {
-        fullForm.append("pdf", pdfFile);
-      }
-
-      const res = await fetch(`${window.location.origin}/api/books/${bookId}`, {
+      const res = await fetch(`/api/books/${bookId}`, {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           Authorization: token
         },
-        body: fullForm
+        body: JSON.stringify(formData)
       });
 
       const result = await res.json();

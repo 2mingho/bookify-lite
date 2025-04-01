@@ -9,18 +9,15 @@
 <body>
   <div class="auth-container">
     <h2>📚 Agregar Libro</h2>
-    <form id="bookForm" enctype="multipart/form-data">
+    <form id="bookForm">
       <input type="text" name="titulo" placeholder="Título" required />
       <input type="text" name="autor" placeholder="Autor" required />
       <input type="number" name="anio" placeholder="Año" required />
       <input type="text" name="genero" placeholder="Género" required />
       <textarea name="descripcion" placeholder="Descripción" required></textarea>
 
-      <label>URL de la portada (imagen)</label>
-      <input type="text" name="portada" placeholder="https://ejemplo.com/portada.jpg" required />
-
-      <label>Archivo PDF</label>
-      <input type="file" name="pdf" accept="application/pdf" required />
+      <input type="url" name="portada" placeholder="Enlace de la imagen de portada" required />
+      <input type="url" name="pdf" placeholder="Enlace del archivo PDF" required />
 
       <button type="submit">Subir Libro</button>
       <p id="bookError" class="error-msg"></p>
@@ -41,40 +38,19 @@
         return;
       }
 
-      const formData = new FormData(bookForm);
-      const data = Object.fromEntries(formData.entries());
+      const formData = Object.fromEntries(new FormData(bookForm));
 
-      // Subir solo PDF como archivo
-      const pdfFile = formData.get("pdf");
-      const uploadPdf = new FormData();
-      uploadPdf.append("pdf", pdfFile);
-
-      // Subir PDF a backend para obtener la ruta
-      const uploadRes = await fetch(`${window.location.origin}/api/books/upload-pdf`, {
-        method: "POST",
-        headers: { Authorization: token },
-        body: uploadPdf
-      });
-
-      const uploadResult = await uploadRes.json();
-      if (!uploadRes.ok) {
-        document.getElementById("bookError").textContent = uploadResult.error || "Error al subir PDF";
-        return;
-      }
-
-      data.pdf = uploadResult.path;
-
-      // Crear libro con portada como URL y pdf como ruta subida
-      const res = await fetch(`${window.location.origin}/api/books`, {
+      const res = await fetch("/api/books", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: token
         },
-        body: JSON.stringify(data)
+        body: JSON.stringify(formData)
       });
 
       const result = await res.json();
+
       if (res.ok) {
         alert("✅ Libro agregado con éxito");
         window.location.href = "dashboard.html";
